@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, CheckCircle, ArrowRightCircle, Ruler } from "lucide-react";
 import SHeading from "@/components/utils/section-heading";
-import { IconSquareRoundedCheckFilled } from "@tabler/icons-react";
+import { IconSquareCheckFilled, IconSquareRoundedCheckFilled } from "@tabler/icons-react";
 import ProductCard2 from "@/components/product/product-image-card";
 import Image from "next/image"; // ✅ Add Next.js Image
 
@@ -263,7 +263,7 @@ export const useAddToCart = () => {
                     Checkout <ArrowRightCircle className="h-4 w-4" />
                   </div>
                 ) : (
-                  "Select Size First"
+                  "Choose Size First"
                 )}
               </Button>
             </div>
@@ -283,7 +283,7 @@ export const useAddToCart = () => {
 
     return (
       <Dialog open={isSizeModalOpen} onOpenChange={setIsSizeModalOpen}>
-        <DialogContent className="max-h-[90vh] p-4 rounded-2xl max-w-[320px]">
+        <DialogContent className="max-h-[90vh] p-0 rounded-md max-w-[320px]">
           <DialogTitle className="sr-only">Select Size</DialogTitle>
 
           <div className="flex justify-center mb-4">
@@ -294,8 +294,8 @@ export const useAddToCart = () => {
             {currentProduct.sizes?.map((size: string) => (
               <Button
                 key={size}
-                className="min-w-[60px]"
-                variant={currentSize === size ? "default" : "outline"}
+                className="min-w-[60px] rounded-md"
+                variant={currentSize === size ? "default" : "secondary"}
                 onClick={() => {
                   if (isSelectingFreeProduct) {
                     setSelectedFreeProductSize(size);
@@ -311,6 +311,7 @@ export const useAddToCart = () => {
 
           <Button
             size="lg"
+           
             onClick={() => {
               if (!currentSize) {
                 toast.error("Please select a size");
@@ -331,11 +332,11 @@ export const useAddToCart = () => {
                 }
               }
             }}
-            className="w-full"
+            className="w-full rounded-md text-lg tracking-tight"
             disabled={!currentSize}
           >
-            {isSelectingFreeProduct ? "Confirm & Checkout" : "Confirm Size"} 
-            <IconSquareRoundedCheckFilled className="ml-2" />
+            {isSelectingFreeProduct ? "Confirm & Checkout" : "Choose Size"} 
+            <IconSquareCheckFilled className="ml-2" />
           </Button>
         </DialogContent>
       </Dialog>

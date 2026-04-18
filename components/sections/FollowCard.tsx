@@ -21,7 +21,7 @@ const FollowCard = () => {
         href={`https://instagram.com/${site.instagram}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-3 p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors mb-2 group"
+        className="flex items-center gap-3 p-3 rounded-xl bg-white shadow-sm border  transition-colors mb-2 group"
       >
         <div className="w-9 h-9 rounded-lg bg-pink-50 dark:bg-pink-950 flex items-center justify-center flex-shrink-0">
           <IconBrandInstagram size={18} className="text-pink-600 dark:text-pink-400" />
@@ -38,7 +38,7 @@ const FollowCard = () => {
         href={`https://wa.me/${site.phone}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-3 p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors group"
+        className="flex items-center gap-3 p-3 rounded-xl border bg-white  transition-colors group"
       >
         <div className="w-9 h-9 rounded-lg bg-green-50 dark:bg-green-950 flex items-center justify-center flex-shrink-0">
           <IconBrandWhatsapp size={18} className="text-green-600 dark:text-green-400" />

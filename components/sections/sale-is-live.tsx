@@ -59,15 +59,14 @@ function ProductCardWithSale() {
   ];
 
   return (
-    <div className="w-full md:max-w-[400px] mx-auto px-4 sm:px-6">
+    <div className=" mx-auto ">
       {/* Glass card — same language as header & hero */}
-      <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl px-5 py-4  overflow-hidden">
+      <div className="relative  overflow-hidden">
         
         {/* Subtle top gloss */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
         {/* Label */}
-        <p className="text-center text-white/50 text-xs font-semibold uppercase tracking-widest mb-4">
+        <p className="text-center text-muted-foreground text-xs font-semibold uppercase tracking-widest mb-4">
           Deal Ends In
         </p>
 
@@ -78,10 +77,10 @@ function ProductCardWithSale() {
               {/* Tile */}
               <div className="flex flex-col items-center">
                 <div className="bg-white/[0.07] border border-white/[0.08] rounded-2xl w-16 h-16 flex flex-col items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
-                  <span className="text-white font-bold text-2xl tabular-nums leading-none">
+                  <span className="text-black font-bold text-2xl tabular-nums leading-none">
                     {item.value.toString().padStart(2, "0")}
                   </span>
-                  <span className="text-white/40 text-[10px] font-semibold uppercase tracking-widest mt-0.5">
+                  <span className="text-black/40 text-[10px] font-semibold uppercase tracking-widest mt-0.5">
                     {item.label}
                   </span>
                 </div>

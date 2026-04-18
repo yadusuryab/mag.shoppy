@@ -33,10 +33,10 @@ export default function ProductCard2({
   const cardContent = (
     <div 
       onClick={onClick}
-      className={`rounded-2xl overflow-hidden cursor-pointer ${className}`}
+      className={`rounded-md overflow-hidden cursor-pointer ${className}`}
     >
       {/* ✅ OPTIMIZED Image with Next.js Image component */}
-      <div className="aspect-square relative bg-gray-100 rounded-2xl overflow-hidden">
+      <div className="aspect-square relative bg-gray-100 rounded-md overflow-hidden">
         {!imageError ? (
           <>
             <Image

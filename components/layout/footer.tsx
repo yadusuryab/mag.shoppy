@@ -16,7 +16,7 @@ function Footer() {
 
 
   return (
-    <footer className="relative bg-black/40 backdrop-blur-xl border-t border-white/[0.08] rounded-t-3xl overflow-hidden">
+    <footer className="relative bg-black border-t  overflow-hidden">
       
       {/* Top gloss line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />

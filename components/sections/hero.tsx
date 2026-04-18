@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { IconArrowUpRight } from "@tabler/icons-react";
+import { Button } from "../ui/button";
 
 export function Hero() {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,11 +45,10 @@ export function Hero() {
           />
 
           {/* Dark scrim at bottom so glass reads clearly */}
-          <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none" />
 
           {/* Glass CTA strip — pinned to bottom inside the image */}
           <div className="absolute bottom-0 w-full z-10">
-            <div className="b backdrop-blur-md border border-white/[0.1]  px-4 py-3 flex items-center justify-between gap-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+            <div className="b   bg-black px-4 py-3 flex items-center justify-between gap-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
               <div className="flex flex-col min-w-0">
                 <span className="text-white/50 text-[10px] font-semibold uppercase tracking-widest leading-none mb-1">
                   2 PAIRS OFFER
@@ -58,20 +58,18 @@ export function Hero() {
                 </span>
               </div>
 
-              <button className="flex-shrink-0 flex items-center gap-1 bg-black text-white text-sm font-bold px-4 py-2 rounded-md transition-transform duration-200 group-hover:scale-105 active:scale-95 whitespace-nowrap">
+              <Button className="rounded-md">
                 Claim Offer
                 <IconArrowUpRight className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           </div>
         </div> 
 
         {/* Loading overlay */}
         {isLoading && (
-          <div className="absolute inset-0 rounded-3xl bg-black/20 backdrop-blur-sm flex items-center justify-center z-20">
-            <div className="bg-white/10 border border-white/20 backdrop-blur-md rounded-full p-3">
-              <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-            </div>
+          <div className="absolute inset-0 rounded-md bg-black/20 backdrop-blur-xl flex items-center justify-center z-20">
+              <div className="w-5 h-1 border-2  border-t-white rounded-full animate-spin" />
           </div>
         )}
       </Link>

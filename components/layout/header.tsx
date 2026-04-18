@@ -1,36 +1,113 @@
 "use client";
 
-import Link from "next/link";
-import { Suspense, useState } from "react";
-import {
-  IconBrandInstagram,
-  IconBrandWhatsapp,
-  IconShoppingBag,
-  IconX,
-} from "@tabler/icons-react";
-import { site } from "@/lib/site-config";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Badge } from "../ui/badge";
+import Image from 'next/image';
+import Link from "next/link";
 
-const NAV = [
-  { label: "Shop", href: "/shop" },
-  { label: "New Arrivals", href: "/new" },
-  { label: "About", href: "/about" },
-];
+function getNextMidnightUTC() {
+  const now = new Date();
+  const nextMidnight = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate() + 1,
+      0, 0, 0
+    )
+  );
+  return nextMidnight;
+}
+
+function getTimeLeft(endTime: Date) {
+  const now = new Date();
+  const difference = endTime.getTime() - now.getTime();
+
+  if (difference <= 0) {
+    return { hours: 0, minutes: 0, seconds: 0, isExpired: true };
+  }
+
+  const hours = Math.floor(difference / (1000 * 60 * 60));
+  const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+  return { hours, minutes, seconds, isExpired: false };
+}
+
+function CountdownTimer() {
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    isExpired: false,
+  });
+
+  useEffect(() => {
+    const endTime = getNextMidnightUTC();
+    setTimeLeft(getTimeLeft(endTime));
+
+    const timer = setInterval(() => {
+      const newTimeLeft = getTimeLeft(endTime);
+      setTimeLeft(newTimeLeft);
+      if (newTimeLeft.isExpired) clearInterval(timer);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  if (timeLeft.isExpired) return null;
+
+  const units = [
+    { value: timeLeft.hours, label: "H" },
+    { value: timeLeft.minutes, label: "M" },
+    { value: timeLeft.seconds, label: "S" },
+  ];
+
+  return (
+    <div className="flex flex-col items-end gap-2">
+      <p className="text-xs font-medium text-muted-foreground mr-2">Deal ends in</p>
+      <div className="flex">
+      {units.map((item, index) => (
+        <div key={index} className="flex items-center">
+          <div className="bg-black text-white rounded-md px-2 py-1 min-w-[48px] text-center">
+            <span className="font-mono font-bold text-lg tabular-nums">
+              {item.value.toString().padStart(2, "0")}
+            </span>
+            <span className="text-white/60 text-[10px] ml-0.5">{item.label}</span>
+          </div>
+          {index < units.length - 1 && (
+            <span className="mx-1 text-black font-bold">:</span>
+          )}
+        </div>
+      ))}
+      </div>
+    </div>
+  );
+}
 
 const Header = () => {
   const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <>
-  <header className="flex justify-center  py-5">
-  <h2 className="font-bold text-2xl tracking-tight">Mag.Shoppy</h2>
-  </header>
+    <header className="sticky top-0 z-50 w-full  bg-background/50 backdrop-blur-2xl saturate-200 supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex px-4 py-2 items-center justify-between">
+        {/* Logo */}
+        <div className="flex items-center">
+         <Link href="/">
+         <Image 
+            src={'/logo.png'} 
+            width={80} 
+            height={80} 
+            alt="Mag Shoppy" 
+            className="w-14 h-14 object-contain"
+          /></Link>
+        </div>
 
-    </>
+        {/* Countdown Timer */}
+        <CountdownTimer />
+      </div>
+    </header>
   );
 };
 

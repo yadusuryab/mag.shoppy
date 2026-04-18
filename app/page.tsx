@@ -16,7 +16,6 @@ export default function Home() {
 
       <div className="px-4 my-8">
       <FollowCard/>
-      <ProductCardWithSale />
      
       
       </div>

@@ -1,12 +1,12 @@
 export const site : any = {
-    name : 'kicksnot.kerala',
-    instagram:'kicksnot.kerala_',
-    phone:"7561010384",
+    name : 'mag.shoppy',
+    instagram:'mag.shoppy',
+    phone:"9495314108",
     google_map:"",
     email:"fashionshoes110@gmail.com",
     address:"India (based in kerala)",
     social : {
-        instagram:'kicksnot.kerala_',
-        whatsapp:'7561010384'
+        instagram:'mag.shoppy',
+        whatsapp:'9495314108'
     }
 }

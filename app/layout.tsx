@@ -43,7 +43,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon?<generated>" type="image/<generated>" sizes="<generated>" />
       </head>
       
-      <body className={`${poppins.className} antialiased bg-[#f7f7f7]`}>
+      <body className={`${poppins.className} antialiased `}>
         {/* ✅ OPTIMIZED: Consider lazy loading non-critical components */}
         <Header />
         <main className="py-5 min-h-screen"> {/* ✅ Added main tag for semantics */}

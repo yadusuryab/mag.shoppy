@@ -61,7 +61,7 @@ const SHeading = ({
       )}
 
       {/* Title */}
-      <h2 className={`${currentSize.title} font-semibold tracking-tighter bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-3`}>
+      <h2 className={`${currentSize.title} font-bold text-left tracking-tighter bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent mb-3`}>
         {title}
       </h2>
 
@@ -87,11 +87,7 @@ const SHeading = ({
       </div>
 
       {/* Optional: Decorative line */}
-      {centered && (
-        <div className="flex justify-center ">
-          <div className="w-16 h-1 bg-gradient-to-r from-transparent via-primary to-transparent rounded-full" />
-        </div>
-      )}
+     
     </div>
   );
 };

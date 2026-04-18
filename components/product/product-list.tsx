@@ -96,7 +96,7 @@ function ProductList({ price }: ProductListProps) {
     return (
       <div className="">
         <div className="md:mx-24">
-          <SHeading title="Select 1st Pair" size="lg" nolink={true} />
+          <SHeading title="Choose 1st Pair" size="lg" nolink={true} />
         </div>
         <div className="md:mx-24">
           <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4">
@@ -122,7 +122,7 @@ function ProductList({ price }: ProductListProps) {
   return (
     <div className="">
       <div className="md:mx-24">
-        <SHeading title="Select 1st Pair" size="lg" nolink={true} />
+        <SHeading title="Choose 1st Pair" size="lg" nolink={true} />
       </div>
 
       <div className="md:mx-24 mt-4">

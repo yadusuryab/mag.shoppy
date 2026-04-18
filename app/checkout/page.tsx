@@ -2,15 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, ShoppingBag, CheckCircle2, Zap, Truck, ArrowRight, Gift, Star, Shield } from "lucide-react";
+import { Loader2, ShoppingBag, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { CustomerDetailsForm } from "@/components/checkout/checkout-form";
-import { Button } from "@/components/ui/button";
 import { site } from "@/lib/site-config";
 import Link from "next/link";
 
@@ -75,7 +70,6 @@ export default function CheckoutPage() {
   };
 
   const handleWhatsAppOrder = () => {
-
     setIsLoading(true);
     try {
       const productMessages = cartItems.map((item, idx) => {
@@ -101,230 +95,259 @@ export default function CheckoutPage() {
     }
   };
 
-  const ProductImage = ({ product, alt, borderClass }: { product: any; alt: string; borderClass: string }) => (
-    <div className={`aspect-square bg-gray-100 rounded-xl overflow-hidden border-2 ${borderClass}`}>
-      <Image src={getProductImageUrl(product)} alt={alt} width={200} height={200} quality={50}
-        className="w-full h-full object-cover" loading="eager" />
-    </div>
-  );
-
-  const StepProgress = () => (
-    <div className="flex items-center justify-center mb-6">
-      {(["payment", "details"] as CheckoutStep[]).map((step, i) => {
-        const labels = ["Payment", "Details"];
-        const activeIdx = ["payment", "details"].indexOf(currentStep);
-        const isDone = activeIdx > i;
-        const isActive = currentStep === step;
-        return (
-          <React.Fragment key={step}>
-            <div className="flex flex-col items-center">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${isActive ? "bg-primary text-primary-foreground" : isDone ? "bg-green-500 text-white" : "bg-muted text-muted-foreground"}`}>
-                {isDone ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
-              </div>
-              <span className="text-xs mt-1">{labels[i]}</span>
-            </div>
-            {i < 1 && <div className={`w-12 h-1 mx-1 transition-colors ${isDone || isActive ? "bg-green-500" : "bg-muted"}`} />}
-          </React.Fragment>
-        );
-      })}
-    </div>
-  );
-
   if (!cartItems.length || !mainProduct) {
     return (
-      <main className="container mx-auto px-4 max-w-md min-h-screen flex items-center justify-center">
-        <Card className="w-full text-center">
-          <CardContent className="pt-6">
-            <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-              <ShoppingBag className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h2 className="text-xl font-bold mb-2">{!cartItems.length ? "Your cart is empty" : "Invalid Cart"}</h2>
-            <p className="text-muted-foreground mb-6">{!cartItems.length ? "Add some stylish shoes to get started!" : "Your cart contains invalid items."}</p>
-            <Button onClick={() => { localStorage.removeItem("cart"); router.push("/"); }} className="w-full">
-              {!cartItems.length ? "Continue Shopping" : "Start Over"}
-            </Button>
-          </CardContent>
-        </Card>
+      <main className="min-h-screen flex items-center justify-center px-4 bg-background">
+        <div className="w-full max-w-sm text-center space-y-4">
+          <div className="mx-auto w-14 h-14 rounded-2xl bg-muted flex items-center justify-center">
+            <ShoppingBag className="h-6 w-6 text-muted-foreground" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">Cart is empty</h2>
+            <p className="text-sm text-muted-foreground mt-1">Add some shoes to get started</p>
+          </div>
+          <button
+            onClick={() => { localStorage.removeItem("cart"); router.push("/"); }}
+            className="w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-medium"
+          >
+            Continue Shopping
+          </button>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="container mx-auto px-4 max-w-2xl min-h-screen pb-24">
-      <div className="py-4">
-        <StepProgress />
+    <main className="min-h-screen bg-background pb-28">
+      <div className="max-w-md mx-auto px-4 py-5 space-y-5">
+
+        {/* Step progress */}
+        <div className="flex items-center gap-2">
+          {(["payment", "details"] as CheckoutStep[]).map((step, i) => {
+            const labels = ["Payment", "Delivery"];
+            const stepIdx = ["payment", "details"].indexOf(currentStep);
+            const isDone = stepIdx > i;
+            const isActive = currentStep === step;
+            return (
+              <React.Fragment key={step}>
+                <div className="flex items-center gap-2">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all
+                    ${isActive ? "bg-primary text-primary-foreground" : isDone ? "bg-green-500 text-white" : "bg-muted text-muted-foreground"}`}>
+                    {isDone ? <CheckCircle2 className="h-3.5 w-3.5" /> : i + 1}
+                  </div>
+                  <span className={`text-sm font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                    {labels[i]}
+                  </span>
+                </div>
+                {i < 1 && (
+                  <div className={`flex-1 h-px transition-colors ${isDone ? "bg-green-500" : "bg-border"}`} />
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
 
         {formErrors.length > 0 && (
-          <Alert variant="destructive" className="mb-4">
+          <Alert variant="destructive">
             <AlertDescription>
-              <ul className="list-disc list-inside space-y-1">{formErrors.map((e, i) => <li key={i}>{e}</li>)}</ul>
+              <ul className="list-disc list-inside space-y-0.5 text-sm">
+                {formErrors.map((e, i) => <li key={i}>{e}</li>)}
+              </ul>
             </AlertDescription>
           </Alert>
         )}
 
-        {currentStep === "payment" ? (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center text-lg gap-2">
-                <CheckCircle2 className="h-5 w-5" />
-                Select Payment Method
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {/* Product Pairs */}
-              <div className="mb-6">
-                <Label className="text-sm font-medium mb-3 block">Your Selected Pairs 🔥</Label>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <ProductImage product={mainProduct} alt={mainProduct.productName || "Main Product"} borderClass="border-blue-500" />
-                    <div className="mt-2 text-center">
-                      <p className="text-sm font-medium">{mainProduct.productName || "Product"}</p>
-                      <p className="text-xs text-muted-foreground">Size: {mainProduct.selectedSize || "N/A"}</p>
-                      <Badge variant="default" className="mt-1">1st Pair</Badge>
+        {/* STEP 1: Payment */}
+        {currentStep === "payment" && (
+          <>
+            {/* Pair cards */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Your Pairs</p>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { product: mainProduct, label: "1st Pair", accent: "ring-blue-500 ring-2" },
+                  ...(freeProduct ? [{ product: freeProduct, label: "2nd Pair", accent: "ring-green-500 ring-2" }] : [])
+                ].map(({ product, label, accent }) => (
+                  <div key={product._id} className={`rounded-2xl overflow-hidden bg-muted/40 border border-border ${accent}`}>
+                    <div className="aspect-square relative bg-muted">
+                      <Image
+                        src={getProductImageUrl(product)}
+                        alt={product.productName || "Product"}
+                        fill className="object-cover"
+                        quality={60}
+                      />
+                    </div>
+                    <div className="p-2.5 space-y-0.5">
+                      <p className="text-xs font-medium leading-tight line-clamp-2">{product.productName}</p>
+                      <p className="text-xs text-muted-foreground">Size {product.selectedSize}</p>
+                      <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mt-1
+                        ${label === "1st Pair" ? "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300" : "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300"}`}>
+                        {label}
+                      </span>
                     </div>
                   </div>
-                  {freeProduct && (
-                    <div className="flex-1">
-                      <div className="relative">
-                        <ProductImage product={freeProduct} alt={freeProduct.productName || "Free Product"} borderClass="border-green-500" />
-                      
-                      </div>
-                      <div className="mt-2 text-center">
-                        <p className="text-sm font-medium">{freeProduct.productName || "Free Product"}</p>
-                        <p className="text-xs text-muted-foreground">Size: {freeProduct.selectedSize || "N/A"}</p>
-                        <Badge className="mt-1 bg-green-600 text-white">2nd Pair</Badge>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Savings Banner */}
-              {/* <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-xl flex items-center gap-2">
-                <Star className="h-4 w-4 text-green-600 flex-shrink-0" />
-                <p className="text-sm text-green-700 font-medium">
-                  You're saving ₹{BASE_PRICE + pair2Extra} on this Buy 1 Get 1 deal! 🎉
-                </p>
-              </div> */}
-
-              {/* Payment Options */}
-             <RadioGroup
-  value={shippingMethod}
-  onValueChange={(v: "online" | "cod") => setShippingMethod(v)}
-  className="space-y-3"
->
-  {/* Online Payment */}
-  <div
-    className={`flex items-start gap-3 rounded-xl border-2 p-4 cursor-pointer transition-all ${
-      shippingMethod === "online"
-        ? "border-red-500 bg-red-50"
-        : "border-muted hover:border-primary/50"
-    }`}
-    onClick={() => setShippingMethod("online")}
-  >
-    <RadioGroupItem value="online" id="online" className="mt-0.5 shrink-0" />
-    <div className="flex-1 min-w-0">
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <Label htmlFor="online" className="font-semibold cursor-pointer">
-          Online Payment
-        </Label>
-        <Badge className="bg-green-700 text-green-50 text-xs px-2 py-0.5 rounded-full">
-          Free shipping
-        </Badge>
-      </div>
-      <div className="flex flex-wrap items-center gap-3 mt-2">
-        <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
-          <Zap className="h-3 w-3" /> Save ₹{COD_CHARGE} instantly
-        </span>
-        <span className="flex items-center gap-1 text-xs text-blue-600">
-          <Truck className="h-3 w-3" /> Fast delivery (5–8 days)
-        </span>
-      </div>
-    </div>
-  </div>
-
-  {/* COD */}
-  <div
-    className={`flex items-start gap-3 rounded-xl border-2 p-4 cursor-pointer transition-all ${
-      shippingMethod === "cod"
-        ? "border-orange-400 bg-orange-50"
-        : "border-muted hover:border-primary/50"
-    }`}
-    onClick={() => setShippingMethod("cod")}
-  >
-    <RadioGroupItem value="cod" id="cod" className="mt-0.5 shrink-0" />
-    <div className="flex-1 min-w-0">
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <Label htmlFor="cod" className="font-semibold cursor-pointer">
-          Cash on Delivery
-        </Label>
-        <Badge className="text-orange-800 border-orange-200 bg-orange-100 text-xs px-2 py-0.5 rounded-full">
-          +₹{COD_CHARGE} extra
-        </Badge>
-      </div>
-      <p className="text-xs text-muted-foreground mt-1.5">
-        Pay when you receive · Choose online to save ₹{COD_CHARGE}
-      </p>
-    </div>
-  </div>
-</RadioGroup>
-
-              {/* Trust badges */}
-             
-              <Button onClick={() => setCurrentStep("details")} className="w-full h-12 text-lg font-semibold mt-6 flex items-center gap-2" size="lg">
-                Continue to Details <ArrowRight className="h-4 w-4" />
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5" /> Delivery Information
-              </CardTitle>
-              <CardDescription>Enter your details for order delivery</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CustomerDetailsForm customerDetails={customerDetails} handleInputChange={handleInputChange} />
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Order Summary */}
-        <Card className="mt-6">
-          <CardContent className="pt-6">
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm"><span>Base Price (2 Pairs)</span><span>₹{BASE_PRICE}</span></div>
-              {pair1Extra > 0 && <div className="flex justify-between text-sm text-muted-foreground ml-4"><span>Extra – Pair 1</span><span>+₹{pair1Extra}</span></div>}
-              {pair2Extra > 0 && <div className="flex justify-between text-sm text-muted-foreground ml-4"><span>Extra – Pair 2</span><span>+₹{pair2Extra}</span></div>}
-              <div className="flex justify-between text-sm">
-                <span>Shipping</span>
-                {shippingMethod === "online"
-                  ? <span className="text-green-600 font-semibold">🎁 FREE SHIPPING</span>
-                  : <span>₹{COD_CHARGE}</span>}
-              </div>
-              <div className="border-t pt-3 flex justify-between font-bold text-base">
-                <span>Total Amount</span><span>₹{totalAmount}</span>
-              </div>
-              {shippingMethod === "cod" && (
-                <p className="text-xs text-orange-600 text-center">💡 Switch to Online Payment to save ₹{COD_CHARGE}!</p>
-              )}
-              <div className="border-t pt-3 text-xs text-muted-foreground">
-                By placing this order, you agree to the <Link href="/T&C" className="text-primary hover:underline">Terms and Conditions</Link>
+                ))}
               </div>
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Payment method */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Payment Method</p>
+              <div className="space-y-2.5">
+                {/* Online */}
+                <button
+                  onClick={() => setShippingMethod("online")}
+                  className={`w-full text-left rounded-2xl border p-4 transition-all
+                    ${shippingMethod === "online"
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30"
+                      : "border-border bg-card hover:border-muted-foreground/30"}`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0
+                      ${shippingMethod === "online" ? "border-blue-500" : "border-muted-foreground"}`}>
+                      {shippingMethod === "online" && <div className="w-2 h-2 rounded-full bg-blue-500" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-semibold">Online Payment</span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300">
+                          Free shipping
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">Save ₹{COD_CHARGE} · Fast delivery in 5–8 days</p>
+                    </div>
+                  </div>
+                </button>
+
+                {/* COD */}
+                <button
+                  onClick={() => setShippingMethod("cod")}
+                  className={`w-full text-left rounded-2xl border p-4 transition-all
+                    ${shippingMethod === "cod"
+                      ? "border-orange-400 bg-orange-50 dark:bg-orange-950/30"
+                      : "border-border bg-card hover:border-muted-foreground/30"}`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0
+                      ${shippingMethod === "cod" ? "border-orange-400" : "border-muted-foreground"}`}>
+                      {shippingMethod === "cod" && <div className="w-2 h-2 rounded-full bg-orange-400" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-semibold">Cash on Delivery</span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300">
+                          +₹{COD_CHARGE}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">Pay when your order arrives</p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Order summary */}
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Order Summary</p>
+              <div className="space-y-1.5 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Base (2 pairs)</span>
+                  <span>₹{BASE_PRICE}</span>
+                </div>
+                {pair1Extra > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground pl-3">↳ Pair 1 extra</span>
+                    <span>+₹{pair1Extra}</span>
+                  </div>
+                )}
+                {pair2Extra > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground pl-3">↳ Pair 2 extra</span>
+                    <span>+₹{pair2Extra}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Shipping</span>
+                  {shippingMethod === "online"
+                    ? <span className="text-green-600 font-semibold text-xs">FREE</span>
+                    : <span>₹{COD_CHARGE}</span>}
+                </div>
+                <div className="flex justify-between font-semibold text-base pt-2 border-t border-border">
+                  <span>Total</span>
+                  <span>₹{totalAmount}</span>
+                </div>
+              </div>
+              {shippingMethod === "online" && (
+                <p className="text-xs text-green-600 font-medium pt-1">
+                  You're saving ₹{COD_CHARGE} with online payment 🎉
+                </p>
+              )}
+            </div>
+
+            <div className="text-xs text-muted-foreground text-center">
+              By continuing, you agree to our{" "}
+              <Link href="/T&C" className="underline underline-offset-2 text-foreground">Terms & Conditions</Link>
+            </div>
+
+            <button
+              onClick={() => setCurrentStep("details")}
+              className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2"
+            >
+              Continue to Delivery <ArrowRight className="h-4 w-4" />
+            </button>
+          </>
+        )}
+
+        {/* STEP 2: Details */}
+        {currentStep === "details" && (
+          <>
+            <button
+              onClick={() => setCurrentStep("payment")}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" /> Back to payment
+            </button>
+
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <CustomerDetailsForm customerDetails={customerDetails} handleInputChange={handleInputChange} />
+            </div>
+
+            {/* Compact summary */}
+            <div className="rounded-2xl border border-border bg-card p-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">
+                  {shippingMethod === "online" ? "Online Payment · Free shipping" : `Cash on Delivery · +₹${COD_CHARGE}`}
+                </p>
+                <p className="text-lg font-bold">₹{totalAmount}</p>
+              </div>
+              <div className="flex gap-1.5">
+                {[mainProduct, freeProduct].filter(Boolean).map((p, i) => (
+                  <div key={i} className="w-10 h-10 rounded-lg overflow-hidden bg-muted border border-border">
+                    <Image src={getProductImageUrl(p)} alt="" width={40} height={40} className="object-cover w-full h-full" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Fixed Bottom CTA */}
+      {/* Fixed CTA for details step */}
       {currentStep === "details" && (
-        <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t p-4">
-          <div className="container mx-auto px-4 max-w-2xl">
-            <Button onClick={handleWhatsAppOrder} disabled={isLoading} className="w-full h-12 text-lg font-semibold flex items-center gap-2" size="lg">
-              {isLoading ? <><Loader2 className="h-5 w-5 animate-spin" /> Preparing Order...</> : `Order via WhatsApp – ₹${totalAmount}`}
-            </Button>
-            <p className="text-xs text-center text-muted-foreground mt-2">You'll be redirected to WhatsApp to confirm</p>
+        <div className="fixed bottom-0 inset-x-0 bg-background/95 backdrop-blur-sm border-t border-border p-4">
+          <div className="max-w-md mx-auto space-y-2">
+            <button
+              onClick={handleWhatsAppOrder}
+              disabled={isLoading}
+              className="w-full py-3.5 rounded-2xl bg-[#25D366] text-white font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60 transition-opacity"
+            >
+              {isLoading ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Preparing order...</>
+              ) : (
+                <>Order via WhatsApp · ₹{totalAmount}</>
+              )}
+            </button>
+            <p className="text-xs text-center text-muted-foreground">You'll be redirected to WhatsApp to confirm</p>
           </div>
         </div>
       )}
