@@ -46,7 +46,7 @@ export default function RootLayout({
       <body className={`${poppins.className} antialiased `}>
         {/* ✅ OPTIMIZED: Consider lazy loading non-critical components */}
         <Header />
-        <main className="py-5 min-h-screen"> {/* ✅ Added main tag for semantics */}
+        <main className="py min-h-screen"> {/* ✅ Added main tag for semantics */}
           {children}
         </main>
         <Footer />
