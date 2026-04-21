@@ -4,8 +4,8 @@ export default function CookiesPolicy() {
   return (
     <>
       <Head>
-        <title>Cookies Policy - kicksnot.kerala</title>
-        <meta name="description" content="Learn how kicksnot.kerala uses cookies to enhance your browsing experience." />
+        <title>Cookies Policy - magshoppy</title>
+        <meta name="description" content="Learn how magshoppy uses cookies to enhance your browsing experience." />
       </Head>
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-4">Cookies Policy</h1>
@@ -21,14 +21,14 @@ export default function CookiesPolicy() {
         <h3 className="text-xl font-semibold mt-4">Definitions</h3>
         <ul className="list-disc ml-6">
           <li>
-            <strong>Company:</strong> Refers to kicksnot.kerala ("the Company", "We", "Us", or "Our").
+            <strong>Company:</strong> Refers to magshoppy ("the Company", "We", "Us", or "Our").
           </li>
           <li>
             <strong>Cookies:</strong> Small files placed on Your device, containing browsing history details among other
             uses.
           </li>
           <li>
-            <strong>Website:</strong> Refers to kicksnot.kerala, accessible from
+            <strong>Website:</strong> Refers to magshoppy, accessible from
             <a href="https://magshoppy.in" target="_blank" rel="noopener noreferrer" className="text-blue-500"> magshoppy.in</a>.
           </li>
           <li>
