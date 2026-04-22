@@ -164,9 +164,7 @@ const TermsAndConditions = () => {
           any doubts, clarify them with us before placing an order.
         </p>
 
-        <p className="mt-3 text-center font-semibold">
-          BEST REGARDS, magshoppy TEAM
-        </p>
+      
       </div>
     </CardContent>
   </Card>

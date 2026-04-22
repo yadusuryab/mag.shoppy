@@ -214,7 +214,7 @@ export default function CheckoutPage() {
                           Free shipping
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">Save ₹{COD_CHARGE} · Fast delivery in 5–8 days</p>
+                      <p className="text-xs text-muted-foreground mt-1">Save ₹{COD_CHARGE} · Fast delivery in 5–7 days</p>
                     </div>
                   </div>
                 </button>
