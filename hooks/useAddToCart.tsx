@@ -99,7 +99,9 @@ export const useAddToCart = () => {
     const updatedCart = [cartItem];
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
-    toast.success(`${item.productName} added to cart!`);
+    // toast.success(`${item.productName} added to cart!`);
+    toast.success(`Sneaker's added to cart!`);
+
   }, []);
 
   const filteredBogoProducts = useCallback((bogoProducts: Product[]) => {
