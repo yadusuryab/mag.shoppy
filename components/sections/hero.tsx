@@ -14,8 +14,8 @@ export function Hero() {
   <Image
     src="/sh3.png"
     alt="sneaker"
-    width={220}
-    height={220}
+    width={280}
+    height={280}
     className="object-contain w-full h-full"
     style={{
       filter:
