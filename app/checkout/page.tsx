@@ -178,7 +178,7 @@ export default function CheckoutPage() {
                       />
                     </div>
                     <div className="p-2.5 space-y-0.5">
-                      <p className="text-xs font-medium leading-tight line-clamp-2">{product.productName}</p>
+                      <p className="text-xs font-medium leading-tight line-clamp-2">Sneaker</p>
                       <p className="text-xs text-muted-foreground">Size {product.selectedSize}</p>
                       <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mt-1
                         ${label === "1st Pair" ? "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300" : "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300"}`}>
