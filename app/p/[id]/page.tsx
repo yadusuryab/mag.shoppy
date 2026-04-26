@@ -28,13 +28,13 @@ export async function generateMetadata({ params }: ProductProps): Promise<Metada
   }
 
   const { productName, price } = product;
-  const ogDescription = `${productName} - ₹${price.toLocaleString()}. Buy now!`;
+  const ogDescription = `${'MagShoppy Sneaker'} - ₹${price.toLocaleString()}. Buy now!`;
 
   return {
-    title: `${productName} - ${site.name}`,
+    title: `${'MagShoppy Sneaker'} - ${site.name}`,
     description: ogDescription,
     openGraph: {
-      title: productName,
+      title: 'MagShoppy Sneaker',
       description: ogDescription,
       // Remove heavy image processing for metadata
     },
@@ -65,7 +65,7 @@ export default async function ProductPage({ params }: ProductProps) {
   } = product;
 
   // Optimized WhatsApp message - minimal content
-  const message = `Hi, I want ${productName} (${category}). Size? ${process.env.NEXT_PUBLIC_BASE_URL}/p/${resolvedParams.id}`;
+  const message = `Hi, I want ${'MagShoppy Sneaker'} (${category}). Size? ${process.env.NEXT_PUBLIC_BASE_URL}/p/${resolvedParams.id}`;
 
   return (
     <div className="md:mx-28 mx-4">
@@ -74,7 +74,7 @@ export default async function ProductPage({ params }: ProductProps) {
         {/* Optimized Product Carousel */}
         <ProductCarousel 
           images={images} 
-          productName={productName} 
+          productName={'MagShoppy Sneaker'} 
         />
 
         {/* Product Details - Minimal re-renders */}
@@ -82,9 +82,9 @@ export default async function ProductPage({ params }: ProductProps) {
           {/* Product Header */}
           <div>
             <p className="uppercase text-sm font-semibold text-muted-foreground">
-              {shoeBrand || site.name}
+              MAGSHOPPY
             </p>
-            <h1 className="text-xl md:text-2xl font-bold uppercase">{productName}</h1>
+            <h1 className="text-xl md:text-2xl font-bold uppercase">Sneaker</h1>
           </div>
 
           {/* Badges */}
