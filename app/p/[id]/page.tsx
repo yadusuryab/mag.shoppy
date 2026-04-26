@@ -28,10 +28,10 @@ export async function generateMetadata({ params }: ProductProps): Promise<Metada
   }
 
   const { productName, price } = product;
-  const ogDescription = `${'MagShoppy Sneaker'} - ₹${price.toLocaleString()}. Buy now!`;
+  const ogDescription = `MagShoppy Sneaker - ₹${price.toLocaleString()}. Buy now!`;
 
   return {
-    title: `${'MagShoppy Sneaker'} - ${site.name}`,
+    title: `MagShoppy Sneakers`,
     description: ogDescription,
     openGraph: {
       title: 'MagShoppy Sneaker',

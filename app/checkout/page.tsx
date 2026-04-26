@@ -11,7 +11,6 @@ import Link from "next/link";
 
 interface CartItem {
   _id: string;
-  productName: string;
   selectedSize: string;
   price: number;
   image?: string;
@@ -74,10 +73,10 @@ export default function CheckoutPage() {
     try {
       const productMessages = cartItems.map((item, idx) => {
         const extra = Math.max(0, (item.price || BASE_PRICE) - BASE_PRICE);
-        let msg = `*PAIR ${idx + 1}*\nProduct: ${item.productName?.toUpperCase() || "Unknown"}\nSize: ${item.selectedSize || "N/A"}\nExtra: ₹${extra}\nLink: https://magshoppy.in/p/${item._id}`;
+        let msg = `*PAIR ${idx + 1}*\nProduct: MagShoppy Sneakers\nSize: ${item.selectedSize || "N/A"}\nExtra: ₹${extra}\nLink: https://magshoppy.in/p/${item._id}`;
         if (item.buyOneGetOne && item.freeProduct) {
           const fExtra = Math.max(0, (item.freeProduct.price || BASE_PRICE) - BASE_PRICE);
-          msg += `\n\n*PAIR ${idx + 2}*\nProduct: ${item.freeProduct.productName?.toUpperCase() || "Unknown"}\nSize: ${item.freeProduct.selectedSize || "N/A"}\nExtra: ₹${fExtra}\nLink: https://magshoppy.in/p/${item.freeProduct._id}`;
+          msg += `\n\n*PAIR ${idx + 2}*\nProduct: MagShoppy Sneakers\nSize: ${item.freeProduct.selectedSize || "N/A"}\nExtra: ₹${fExtra}\nLink: https://magshoppy.in/p/${item.freeProduct._id}`;
         }
         return msg;
       }).join("\n\n");
@@ -172,7 +171,7 @@ export default function CheckoutPage() {
                     <div className="aspect-square relative bg-muted">
                       <Image
                         src={getProductImageUrl(product)}
-                        alt={product.productName || "Product"}
+                        alt={"MagShoppy Sneakers"}
                         fill className="object-cover"
                         quality={60}
                       />
