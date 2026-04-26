@@ -8,14 +8,14 @@ export function Hero() {
   return (
     <div className="w-full md:max-w-[400px] p mx-auto py-8">
       <div
-  className="absolute top-[-10] right-[-24] w-[220px] h-[220px] z-40"
+  className="absolute top-[-54] right-[-88px] w-[480px] h-[480px] z-40"
   style={{ animation: "floatShoe 3s ease-in-out infinite" }}
 >
   <Image
-    src="/sh3.png"
+    src="/sh2.png"
     alt="sneaker"
-    width={280}
-    height={280}
+    width={500}
+    height={500}
     className="object-contain w-full h-full"
     style={{
       filter:
