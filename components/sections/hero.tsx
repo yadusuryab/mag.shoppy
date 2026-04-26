@@ -43,10 +43,25 @@ export function Hero() {
             Limited time offer
           </div>
 
-          <h1 className="text-[38px] font-extrabold leading-[1.05] text-white mb-3" style={{ fontFamily: "'Syne', sans-serif" }}>
-            Buy 2<br /> pairs,<br />
-            pay for <span className="text-amber-400">one.</span>
-          </h1>
+          <h1
+  className="text-[38px] font-extrabold leading-[1.05] text-white mb-3"
+  style={{
+    fontFamily: "'Syne', sans-serif",
+    textShadow: "0 0 8px rgba(255,255,255,0.6), 0 0 20px rgba(255,255,255,0.3)",
+  }}
+>
+  Buy 2<br /> pairs,<br />
+  pay for{" "}
+  <span
+    className="text-amber-400"
+    style={{
+      textShadow:
+        "0 0 8px rgba(251,191,36,0.9), 0 0 20px rgba(251,191,36,0.6), 0 0 40px rgba(251,191,36,0.3)",
+    }}
+  >
+    one.
+  </span>
+</h1>
 
           <p className="text-[13px] leading-relaxed mb-5 max-w-[240px]" style={{ color: "rgba(255,255,255,0.35)" }}>
             Get two pairs at the price of one. No conditions — just add to cart.
