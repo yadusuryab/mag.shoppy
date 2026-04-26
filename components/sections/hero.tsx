@@ -12,7 +12,7 @@ export function Hero() {
   style={{ animation: "floatShoe 3s ease-in-out infinite" }}
 >
   <Image
-    src="/sh2.webp"
+    src="/sh3.png"
     alt="sneaker"
     width={220}
     height={220}
