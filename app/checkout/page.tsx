@@ -73,16 +73,17 @@ export default function CheckoutPage() {
     try {
       const productMessages = cartItems.map((item, idx) => {
         const extra = Math.max(0, (item.price || BASE_PRICE) - BASE_PRICE);
-        let msg = `*PAIR ${idx + 1}*\nProduct: MagShoppy Sneakers\nSize: ${item.selectedSize || "N/A"}\nExtra: ₹${extra}\nLink: https://magshoppy.in/p/${item._id}`;
+        let msg = `*PAIR ${idx + 1} :* https://magshoppy.in/p/${item._id}\nSize: ${item.selectedSize || "N/A"}`;
+  
         if (item.buyOneGetOne && item.freeProduct) {
           const fExtra = Math.max(0, (item.freeProduct.price || BASE_PRICE) - BASE_PRICE);
-          msg += `\n\n*PAIR ${idx + 2}*\nProduct: MagShoppy Sneakers\nSize: ${item.freeProduct.selectedSize || "N/A"}\nExtra: ₹${fExtra}\nLink: https://magshoppy.in/p/${item.freeProduct._id}`;
+          msg += `\n\n*PAIR ${idx + 2} :* https://magshoppy.in/p/${item.freeProduct._id}\nSize: ${item.freeProduct.selectedSize || "N/A"}`;
         }
         return msg;
       }).join("\n\n");
-
-      const msg = `*2 PAIR SHOES ORDER*\n\n${productMessages}\n\n*CUSTOMER DETAILS*\nName: ${customerDetails.name}\nInstagram: ${customerDetails.instagramId}\nAddress: ${customerDetails.address}\nDistrict: ${customerDetails.district}\nState: ${customerDetails.state}\nPincode: ${customerDetails.pincode}\nLandmark: ${customerDetails.landmark || "N/A"}\nContact No.1: ${customerDetails.contact1}\nContact No.2: ${customerDetails.contact2 || "N/A"}\n\n*ORDER SUMMARY*\nBase Price: ₹${BASE_PRICE}\nPair 1 Extra: ₹${pair1Extra}\nPair 2 Extra: ₹${pair2Extra}\nShipping: ${shippingMethod === "online" ? "FREE (Online Payment)" : `₹${COD_CHARGE} (Cash on Delivery)`}\n*GRAND TOTAL: ₹${totalAmount}*`.trim();
-
+  
+      const msg = `*ORDER CONFIRMATION – 2 PAIR COMBO*\n\n*CUSTOMER INFORMATION*\nName: ${customerDetails.name}\nInstagram ID: ${customerDetails.instagramId}\nAddress: ${customerDetails.address}\nDistrict: ${customerDetails.district}\nState: ${customerDetails.state}\nPincode: ${customerDetails.pincode}\nLandmark: ${customerDetails.landmark || "N/A"}\nPhone 1: ${customerDetails.contact1}\nAlternative Phone 2: ${customerDetails.contact2 || "N/A"}\n\n*PRODUCT DETAILS*\n\n${productMessages}\n\n*PAYMENT SUMMARY*\n- Product Price: ₹${BASE_PRICE + pair1Extra + pair2Extra}\n- Shipping: Free (Prepaid)\n\n*Total Amount Payable: ₹${totalAmount}✅`.trim();
+  
       setTimeout(() => {
         window.open(`https://wa.me/${site.phone}?text=${encodeURIComponent(msg)}`, "_blank");
         localStorage.removeItem("cart");
