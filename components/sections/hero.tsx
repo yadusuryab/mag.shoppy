@@ -8,8 +8,7 @@ export function Hero() {
   return (
     <Link
         href="/offer?price=1499"
-        className="block group rounded-[20px] overflow-hidden relative flex flex-col"
-        style={{ background: "#080808",}}
+   
       >
     <div className="w-full md:max-w-[400px] p mx-auto py-8">
       <div
