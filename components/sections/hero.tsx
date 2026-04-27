@@ -12,7 +12,7 @@ export function Hero() {
       >
     <div className="w-full md:max-w-[400px] p mx-auto py-8">
       <div
-  className="absolute top-[-54] right-[-88px] w-[480px] h-[480px] z-40"
+  className="absolute top-[-54] right-[-88px] w-[480px] h-[480px] z-20"
   style={{ animation: "floatShoe 3s ease-in-out infinite" }}
 >
   <Image
