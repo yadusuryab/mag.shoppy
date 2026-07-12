@@ -33,6 +33,7 @@ export function Hero() {
 
   return (
     <div className="w-full md:max-w-[420px] mx-auto py-6 relative">
+      <Link href="/offer?price=1499" className="group relative block w-full overflow-hidden rounded-2xl border border-white/10 hover:border-white/20 transition-colors">
       {/* Floating shoe with improved animation */}
       <div
         className="absolute -top-10 -right-12 w-[280px] h-[380px] md:w-[340px] md:h-[340px] z-20 pointer-events-none animate-float-shoe"
@@ -253,6 +254,7 @@ export function Hero() {
           animation: pulse-slow 3s ease-in-out infinite;
         }
       `}</style>
+      </Link>
     </div>
   );
 }
