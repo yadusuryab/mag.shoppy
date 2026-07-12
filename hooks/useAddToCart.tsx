@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, CheckCircle, ArrowRightCircle, Ruler } from "lucide-react";
 import SHeading from "@/components/utils/section-heading";
-import { IconSquareCheckFilled, IconSquareRoundedCheckFilled } from "@tabler/icons-react";
+import { IconSquareRoundedCheckFilled } from "@tabler/icons-react";
 import ProductCard2 from "@/components/product/product-image-card";
 import Image from "next/image"; // ✅ Add Next.js Image
+import Link from "next/link";
 
 export interface Product {
   _id: string;
@@ -21,6 +22,9 @@ export interface Product {
   offerPrice?: number;
 }
 
+// How long to wait before showing the manual "go to checkout" fallback
+const CHECKOUT_FALLBACK_DELAY_MS = 3000;
+
 export const useAddToCart = () => {
   const router = useRouter();
   const [isBogoModalOpen, setIsBogoModalOpen] = useState(false);
@@ -30,7 +34,12 @@ export const useAddToCart = () => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedFreeProductSize, setSelectedFreeProductSize] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  
+
+  // ✅ Checkout navigation state — shows loading, then a manual fallback link
+  const [isNavigatingToCheckout, setIsNavigatingToCheckout] = useState(false);
+  const [showCheckoutFallback, setShowCheckoutFallback] = useState(false);
+  const checkoutFallbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // ✅ REDUCED pagination limits
   const [bogoOffset, setBogoOffset] = useState<number>(0);
   const [bogoHasMore, setBogoHasMore] = useState<boolean>(true);
@@ -99,9 +108,33 @@ export const useAddToCart = () => {
     const updatedCart = [cartItem];
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
-    // toast.success(`${item.productName} added to cart!`);
-    toast.success(`Sneaker's added to cart!`);
+    toast.success(`${item.productName} added to cart!`);
+  }, []);
 
+  // ✅ Centralized checkout navigation: shows loading state, and if
+  // navigation hasn't happened after a delay, reveals a manual link.
+  const goToCheckout = useCallback(() => {
+    setIsNavigatingToCheckout(true);
+    setShowCheckoutFallback(false);
+
+    if (checkoutFallbackTimer.current) {
+      clearTimeout(checkoutFallbackTimer.current);
+    }
+    checkoutFallbackTimer.current = setTimeout(() => {
+      setShowCheckoutFallback(true);
+    }, CHECKOUT_FALLBACK_DELAY_MS);
+
+    router.push("/checkout");
+  }, [router]);
+
+  // Clear the navigating state automatically once the route actually changes
+  // (component using this hook will unmount / rerender on real navigation).
+  useEffect(() => {
+    return () => {
+      if (checkoutFallbackTimer.current) {
+        clearTimeout(checkoutFallbackTimer.current);
+      }
+    };
   }, []);
 
   const filteredBogoProducts = useCallback((bogoProducts: Product[]) => {
@@ -122,9 +155,9 @@ export const useAddToCart = () => {
       addToCart(selectedProduct, selectedSize, selectedFreeProduct, selectedFreeProductSize);
       setIsBogoModalOpen(false);
       setIsSizeModalOpen(false);
-      setTimeout(() => router.push("/checkout"), 100);
+      setTimeout(() => goToCheckout(), 100);
     }
-  }, [selectedProduct, selectedSize, selectedFreeProduct, selectedFreeProductSize, addToCart, router]);
+  }, [selectedProduct, selectedSize, selectedFreeProduct, selectedFreeProductSize, addToCart, goToCheckout]);
 
   // ✅ OPTIMIZED: Throttled scroll handler
   const handleBogoScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
@@ -265,7 +298,7 @@ export const useAddToCart = () => {
                     Checkout <ArrowRightCircle className="h-4 w-4" />
                   </div>
                 ) : (
-                  "Choose Size First"
+                  "Select Size First"
                 )}
               </Button>
             </div>
@@ -285,7 +318,7 @@ export const useAddToCart = () => {
 
     return (
       <Dialog open={isSizeModalOpen} onOpenChange={setIsSizeModalOpen}>
-        <DialogContent className="max-h-[90vh] p-0 rounded-md max-w-[320px]">
+        <DialogContent className="max-h-[90vh] p-4 rounded-2xl max-w-[320px]">
           <DialogTitle className="sr-only">Select Size</DialogTitle>
 
           <div className="flex justify-center mb-4">
@@ -296,8 +329,8 @@ export const useAddToCart = () => {
             {currentProduct.sizes?.map((size: string) => (
               <Button
                 key={size}
-                className="min-w-[60px] rounded-md"
-                variant={currentSize === size ? "default" : "secondary"}
+                className="min-w-[60px]"
+                variant={currentSize === size ? "default" : "outline"}
                 onClick={() => {
                   if (isSelectingFreeProduct) {
                     setSelectedFreeProductSize(size);
@@ -313,7 +346,6 @@ export const useAddToCart = () => {
 
           <Button
             size="lg"
-           
             onClick={() => {
               if (!currentSize) {
                 toast.error("Please select a size");
@@ -330,25 +362,55 @@ export const useAddToCart = () => {
                 } else {
                   addToCart(selectedProduct!, currentSize);
                   setIsSizeModalOpen(false);
-                  router.push("/checkout");
+                  goToCheckout();
                 }
               }
             }}
-            className="w-full rounded-md text-lg tracking-tight"
+            className="w-full"
             disabled={!currentSize}
           >
-            {isSelectingFreeProduct ? "Confirm & Checkout" : "Choose Size"} 
-            <IconSquareCheckFilled className="ml-2" />
+            {isSelectingFreeProduct ? "Confirm & Checkout" : "Confirm Size"} 
+            <IconSquareRoundedCheckFilled className="ml-2" />
           </Button>
         </DialogContent>
       </Dialog>
     );
-  }, [isSizeModalOpen, selectedFreeProduct, selectedProduct, selectedFreeProductSize, selectedSize, completeBogoFlow, addToCart, router]);
+  }, [isSizeModalOpen, selectedFreeProduct, selectedProduct, selectedFreeProductSize, selectedSize, completeBogoFlow, addToCart, goToCheckout]);
+
+  // ✅ Loading overlay shown while navigating to checkout.
+  // If navigation hasn't completed after CHECKOUT_FALLBACK_DELAY_MS,
+  // a manual "/checkout" link appears so the user is never stuck.
+  const renderCheckoutLoading = useCallback(() => {
+    if (!isNavigatingToCheckout) return null;
+
+    return (
+      <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-sm flex flex-col items-center justify-center gap-4 p-6 text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        <p className="text-sm text-muted-foreground">Taking you to checkout…</p>
+
+        {showCheckoutFallback && (
+          <div className="mt-2 flex flex-col items-center gap-2">
+            <p className="text-sm text-muted-foreground">
+              Still here? Tap below to continue.
+            </p>
+            <Link
+              href="/checkout"
+              onClick={() => setIsNavigatingToCheckout(false)}
+              className="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium"
+            >
+              Go to checkout <ArrowRightCircle className="h-4 w-4" />
+            </Link>
+          </div>
+        )}
+      </div>
+    );
+  }, [isNavigatingToCheckout, showCheckoutFallback]);
 
   return {
     handleProductClick,
     renderBogoPage,
     renderSizeModal,
+    renderCheckoutLoading,
     setSearchQuery,
   };
 };
