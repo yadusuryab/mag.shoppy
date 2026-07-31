@@ -16,6 +16,7 @@ const REVIEW_IMAGES = [
   "9.jpg",
     "10.jpg",
     "11.jpg",
+    "12.jpg",
 ];
 
 function splitIntoColumns(items: string[], count: number) {
