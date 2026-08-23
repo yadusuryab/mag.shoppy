@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, ShoppingBag, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Loader2, ShoppingBag, ArrowLeft, ArrowRight, CheckCircle2, SprayCan, Star } from "lucide-react";
 import Image from "next/image";
 import { CustomerDetailsForm } from "@/components/checkout/checkout-form";
 import { site } from "@/lib/site-config";
@@ -32,11 +32,13 @@ const getProductImageUrl = (product: any): string => {
 
 const BASE_PRICE = 1499;
 const COD_CHARGE = 300;
+const SHOE_CLEANER_PRICE = 80;
 
 export default function CheckoutPage() {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [shippingMethod, setShippingMethod] = useState<"online" | "cod">("online");
+  const [addShoeCleaner, setAddShoeCleaner] = useState(false);
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("payment");
   const [customerDetails, setCustomerDetails] = useState({
     name: "", contact1: "", contact2: "", address: "",
@@ -60,7 +62,8 @@ export default function CheckoutPage() {
   const pair2Extra = Math.max(0, (freeProduct?.price || BASE_PRICE) - BASE_PRICE);
   const subtotal = BASE_PRICE + pair1Extra + pair2Extra;
   const shippingCharge = shippingMethod === "online" ? 0 : COD_CHARGE;
-  const totalAmount = subtotal + shippingCharge;
+  const cleanerCharge = addShoeCleaner ? SHOE_CLEANER_PRICE : 0;
+  const totalAmount = subtotal + shippingCharge + cleanerCharge;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -82,7 +85,7 @@ export default function CheckoutPage() {
         return msg;
       }).join("\n\n");
   
-      const msg = `*ORDER CONFIRMATION – 2 PAIR COMBO*\n\n*CUSTOMER INFORMATION*\nName: ${customerDetails.name}\nInstagram ID: ${customerDetails.instagramId}\nAddress: ${customerDetails.address}\nDistrict: ${customerDetails.district}\nState: ${customerDetails.state}\nPincode: ${customerDetails.pincode}\nLandmark: ${customerDetails.landmark || "N/A"}\nPhone 1: ${customerDetails.contact1}\nAlternative Phone 2: ${customerDetails.contact2 || "N/A"}\n\n*PRODUCT DETAILS*\n\n${productMessages}\n\n*PAYMENT SUMMARY*\n- Product Price: ₹${BASE_PRICE + pair1Extra + pair2Extra}\n- Shipping: Free (Prepaid)\n\n*Total Amount Payable: ₹${totalAmount}✅`.trim();
+      const msg = `*ORDER CONFIRMATION – 2 PAIR COMBO*\n\n*CUSTOMER INFORMATION*\nName: ${customerDetails.name}\nInstagram ID: ${customerDetails.instagramId}\nAddress: ${customerDetails.address}\nDistrict: ${customerDetails.district}\nState: ${customerDetails.state}\nPincode: ${customerDetails.pincode}\nLandmark: ${customerDetails.landmark || "N/A"}\nPhone 1: ${customerDetails.contact1}\nAlternative Phone 2: ${customerDetails.contact2 || "N/A"}\n\n*PRODUCT DETAILS*\n\n${productMessages}\n\n*PAYMENT SUMMARY*\n- Product Price: ₹${BASE_PRICE + pair1Extra + pair2Extra}\n${addShoeCleaner ? `- Add-on: Shoe Cleaner (+₹${SHOE_CLEANER_PRICE})\n` : ""}- Shipping: ${shippingMethod === "online" ? "Free (Prepaid)" : `₹${COD_CHARGE} (COD)`}\n\n*Total Amount Payable: ₹${totalAmount}✅`.trim();
   
       setTimeout(() => {
         window.open(`https://wa.me/${site.phone}?text=${encodeURIComponent(msg)}`, "_blank");
@@ -246,6 +249,50 @@ export default function CheckoutPage() {
               </div>
             </div>
 
+            {/* Shoe Cleaner Add-on */}
+            <div
+              onClick={() => setAddShoeCleaner(!addShoeCleaner)}
+              className={`relative cursor-pointer rounded-2xl p-[2px] transition-all ${
+                addShoeCleaner
+                  ? "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500"
+                  : "bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 animate-pulse"
+              }`}
+            >
+              <div className="absolute -top-2.5 left-4 z-10 flex items-center gap-1 rounded-full bg-yellow-400 px-2.5 py-0.5 shadow-md">
+                <Star className="h-3 w-3 text-yellow-900 fill-yellow-900" />
+                <span className="text-[10px] font-extrabold text-yellow-900 tracking-wide">LIMITED OFFER</span>
+              </div>
+
+              <div className={`flex items-start gap-3 rounded-[14px] p-4 pt-5 ${addShoeCleaner ? "bg-blue-50 dark:bg-blue-950/30" : "bg-card"}`}>
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${addShoeCleaner ? "bg-blue-600" : "bg-gradient-to-br from-purple-600 to-cyan-500"}`}>
+                  <SprayCan className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="text-sm font-bold">Add Premium Shoe Cleaner</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-muted-foreground line-through">₹199</span>
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-cyan-500 text-white">
+                        ₹{SHOE_CLEANER_PRICE} only
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Keep both pairs looking fresh · Most customers add this 🔥</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <input
+                      type="checkbox"
+                      checked={addShoeCleaner}
+                      onChange={() => setAddShoeCleaner(!addShoeCleaner)}
+                      className="h-4 w-4 accent-blue-600"
+                    />
+                    <span className={`text-xs font-semibold ${addShoeCleaner ? "text-blue-600" : "text-muted-foreground"}`}>
+                      {addShoeCleaner ? "✓ Added to your order" : "Tap to add"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Order summary */}
             <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Order Summary</p>
@@ -264,6 +311,12 @@ export default function CheckoutPage() {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground pl-3">↳ Pair 2 extra</span>
                     <span>+₹{pair2Extra}</span>
+                  </div>
+                )}
+                {addShoeCleaner && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground flex items-center gap-1"><SprayCan className="h-3.5 w-3.5" /> Shoe Cleaner</span>
+                    <span>+₹{SHOE_CLEANER_PRICE}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
@@ -317,6 +370,7 @@ export default function CheckoutPage() {
               <div>
                 <p className="text-xs text-muted-foreground">
                   {shippingMethod === "online" ? "Online Payment · Free shipping" : `Cash on Delivery · +₹${COD_CHARGE}`}
+                  {addShoeCleaner ? " · + Shoe Cleaner" : ""}
                 </p>
                 <p className="text-lg font-bold">₹{totalAmount}</p>
               </div>
