@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { IconArrowUpRight, IconClock } from "@tabler/icons-react";
+import { IconArrowUpRight } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 
@@ -36,7 +36,8 @@ export function Hero() {
     <div className="w-full md:max-w-[420px] mx-auto py-6 relative">
       <Link
         href="/offer?price=1499"
-        className="group relative block w-full overflow-hidden rounded-md border border-white/10 hover:border-white/20 transition-colors"
+        aria-label="Buy 2 pairs, pay for one — ₹1,499, limited time offer"
+        className="group relative block w-full overflow-hidden rounded-md border border-white/10 hover:border-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 transition-colors"
       >
         {/* Floating shoe with improved animation */}
         <div
@@ -51,7 +52,7 @@ export function Hero() {
             width={340}
             height={340}
             priority
-            className="object-contain w-full h-full transition-transform duration-700 hover:scale-105"
+            className="object-contain w-full h-full transition-transform duration-700 group-hover:scale-105"
           />
         </div>
 
@@ -94,7 +95,20 @@ export function Hero() {
                 Flash Sale
               </div>
 
-              {/* Timer */}
+              {/* Timer — makes the urgency real instead of just a label */}
+              <div
+                className="flex items-center gap-1 text-[11px] font-mono font-semibold tabular-nums px-2 py-0.5 rounded-md border"
+                style={{
+                  color: "rgba(255,255,255,0.6)",
+                  borderColor: "rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.03)",
+                }}
+                aria-live="off"
+              >
+                <span>{formatTime(timeLeft.hours)}</span>:
+                <span>{formatTime(timeLeft.minutes)}</span>:
+                <span>{formatTime(timeLeft.seconds)}</span>
+              </div>
             </div>
 
             <h1
@@ -119,9 +133,7 @@ export function Hero() {
               </span>
             </h1>
 
-            <p
-              className="text-xs tracking-tight text-muted-foreground font-semibold mb-5 max-w-[240px]"
-            >
+            <p className="text-xs tracking-tight text-muted-foreground font-semibold mb-5 max-w-[240px]">
               2 premium pairs at the price of one. No hidden conditions —
               just add to cart.
             </p>
@@ -134,7 +146,7 @@ export function Hero() {
               ].map((t) => (
                 <span
                   key={t.label}
-                  className="text-sm rounded-md font-semibold text-white px-2 py-0.5 border flex items-center gap-1.5 transition-all duration-200 hover:border-white/20 hover:bg-white/5"
+                  className="text-sm rounded-md font-semibold text-white px-2 py-0.5 border flex items-center gap-1.5 transition-all duration-200 group-hover:border-white/20 group-hover:bg-white/5"
                   style={{
                     borderColor: "rgba(255,255,255,0.08)",
                     background: "rgba(255,255,255,0.03)",
@@ -149,17 +161,11 @@ export function Hero() {
             {/* Pricing with improved hierarchy */}
             <div className="flex items-end gap-4">
               <div>
-                
                 <div className="flex items-baseline gap-3">
-                  <p
-                    className="text-5xl tracking-tighter font-bold text-white"
-                  >
+                  <p className="text-5xl tracking-tighter font-bold text-white">
                     ₹1,499
                   </p>
-                  <span
-                    className="text-xs font-medium text-muted-foreground line-through"
-                    
-                  >
+                  <span className="text-xs font-medium text-muted-foreground line-through">
                     ₹2,999
                   </span>
                 </div>
@@ -181,40 +187,29 @@ export function Hero() {
             className="relative z-10 flex items-center gap-3 border-t px-6 py-3.5"
             style={{ borderColor: "rgba(255,255,255,0.05)" }}
           >
-        
             <span
               className="w-px h-4"
               style={{ background: "rgba(255,255,255,0.05)" }}
             />
-            <span
-              className="text-[10px]"
-              style={{ color: "rgba(255,255,255,0.25)" }}
-            >
+            <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.25)" }}>
               Valid on all premium pairs
             </span>
-            <span
-              className="ml-auto text-[9px]"
-              style={{ color: "rgba(255,255,255,0.15)" }}
-            >
+            <span className="ml-auto text-[9px]" style={{ color: "rgba(255,255,255,0.15)" }}>
               • 5k+ sold
             </span>
           </div>
         </div>
 
-        {/* Enhanced CTA with micro-interactions */}
-        <Link
-          href="/offer?price=1499"
-          
+        {/* CTA — no longer a nested <Link>; the whole card is already clickable */}
+        <Button
+          size="lg"
+          tabIndex={-1}
+          className="w-full rounded-none rounded-b-md bg-amber-400 text-black text-lg font-bold tracking-tighter group-hover:bg-amber-500 transition-colors duration-300"
         >
-         
-         <Button size={'lg'} className="w-full rounded-none rounded-b-md  bg-amber-400 text-black  text-lg font-bold tracking-tighter hover:bg-amber-500 transition-colors duration-300">
-             Buy Now
-            <IconArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                
-         </Button>
-        </Link>
+          Buy Now
+          <IconArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </Button>
 
-        {/* Add animation keyframes via style */}
         <style jsx>{`
           @keyframes float-shoe {
             0%,
