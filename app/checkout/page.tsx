@@ -8,7 +8,7 @@ import Image from "next/image";
 import { CustomerDetailsForm } from "@/components/checkout/checkout-form";
 import { site } from "@/lib/site-config";
 import Link from "next/link";
-import { client } from "@/sanity/lib/client"; // adjust path to your Sanity client
+import { client } from "@/sanity/lib/client";
 
 interface CartItem {
   _id: string;
@@ -42,6 +42,8 @@ const SHOE_CLEANER_PRICE = 80;
 
 const SETTINGS_QUERY = `*[_type == "settings"][0]{ freeSocksOffer, shoeCleanerAddon }`;
 
+const REQUIRED_FIELDS = ["name", "contact1", "address", "district", "state", "pincode"] as const;
+
 export default function CheckoutPage() {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -56,6 +58,7 @@ export default function CheckoutPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<string[]>([]);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     try {
@@ -100,13 +103,54 @@ export default function CheckoutPage() {
   const cleanerCharge = settings.shoeCleanerAddon && addShoeCleaner ? SHOE_CLEANER_PRICE : 0;
   const totalAmount = subtotal + shippingCharge + cleanerCharge;
 
+  const phoneValid = /^\d{10}$/.test(customerDetails.contact1.trim());
+  const pincodeValid = /^\d{6}$/.test(customerDetails.pincode.trim());
+
+  const missingFields = REQUIRED_FIELDS.filter(
+    (field) => !customerDetails[field]?.trim()
+  );
+
+  const isFormValid = missingFields.length === 0 && phoneValid && pincodeValid;
+
+  const getFieldError = (field: string): string | undefined => {
+    if (!touched[field]) return undefined;
+    if (REQUIRED_FIELDS.includes(field as any) && !customerDetails[field as keyof typeof customerDetails]?.trim()) {
+      return "This field is required";
+    }
+    if (field === "contact1" && customerDetails.contact1.trim() && !phoneValid) {
+      return "Enter a valid 10-digit phone number";
+    }
+    if (field === "pincode" && customerDetails.pincode.trim() && !pincodeValid) {
+      return "Enter a valid 6-digit pincode";
+    }
+    return undefined;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setCustomerDetails(prev => ({ ...prev, [name]: value }));
     if (formErrors.length > 0) setFormErrors([]);
   };
 
+  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+  };
+
   const handleWhatsAppOrder = () => {
+    setTouched(
+      REQUIRED_FIELDS.reduce((acc, f) => ({ ...acc, [f]: true }), { contact1: true, pincode: true })
+    );
+
+    if (!isFormValid) {
+      const errors: string[] = [];
+      if (missingFields.length > 0) errors.push("Please fill all required fields.");
+      if (customerDetails.contact1.trim() && !phoneValid) errors.push("Enter a valid 10-digit phone number.");
+      if (customerDetails.pincode.trim() && !pincodeValid) errors.push("Enter a valid 6-digit pincode.");
+      setFormErrors(errors);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const productMessages = cartItems.map((item, idx) => {
@@ -212,8 +256,8 @@ export default function CheckoutPage() {
                 {[
                   { product: mainProduct, label: "1st Pair", accent: "ring-blue-500 ring-2" },
                   ...(freeProduct ? [{ product: freeProduct, label: "2nd Pair", accent: "ring-green-500 ring-2" }] : [])
-                ].map(({ product, label, accent }) => (
-                  <div key={product._id} className={`rounded-2xl overflow-hidden bg-muted/40 border border-border ${accent}`}>
+                ].map(({ product, label, accent }, index) => (
+                  <div key={index} className={`rounded-2xl overflow-hidden bg-muted/40 border border-border ${accent}`}>
                     <div className="aspect-square relative bg-muted">
                       <Image
                         src={getProductImageUrl(product)}
@@ -239,7 +283,6 @@ export default function CheckoutPage() {
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Payment Method</p>
               <div className="space-y-2.5">
-                {/* Online */}
                 <button
                   onClick={() => setShippingMethod("online")}
                   className={`w-full text-left rounded-2xl border p-4 transition-all
@@ -264,7 +307,6 @@ export default function CheckoutPage() {
                   </div>
                 </button>
 
-                {/* COD */}
                 <button
                   onClick={() => setShippingMethod("cod")}
                   className={`w-full text-left rounded-2xl border p-4 transition-all
@@ -406,7 +448,12 @@ export default function CheckoutPage() {
             </button>
 
             <div className="rounded-2xl border border-border bg-card p-4">
-              <CustomerDetailsForm customerDetails={customerDetails} handleInputChange={handleInputChange} />
+              <CustomerDetailsForm
+                customerDetails={customerDetails}
+                handleInputChange={handleInputChange}
+                handleInputBlur={handleInputBlur}
+                getFieldError={getFieldError}
+              />
             </div>
 
             {/* Compact summary */}
@@ -436,8 +483,8 @@ export default function CheckoutPage() {
           <div className="max-w-md mx-auto space-y-2">
             <button
               onClick={handleWhatsAppOrder}
-              disabled={isLoading}
-              className="w-full py-3.5 rounded-2xl bg-[#25D366] text-white font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60 transition-opacity"
+              disabled={isLoading || !isFormValid}
+              className="w-full py-3.5 rounded-2xl bg-[#25D366] text-white font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
             >
               {isLoading ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Preparing order...</>
@@ -445,6 +492,9 @@ export default function CheckoutPage() {
                 <>Order via WhatsApp · ₹{totalAmount}</>
               )}
             </button>
+            {!isFormValid && (
+              <p className="text-xs text-center text-red-500">Fill all required fields to continue</p>
+            )}
             <p className="text-xs text-center text-muted-foreground">You'll be redirected to WhatsApp to confirm</p>
           </div>
         </div>
